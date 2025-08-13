@@ -1,0 +1,59 @@
+@import '/assets/fonts/IRANYekanX/IRANYekanX.css';
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0000001A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #637381;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #637381ce;
+}
+
+html {
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+body,
+#root,
+#root__layout {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 100%;
+  flex-direction: column;
+  font-family: 'IRANYekanX', sans-serif;
+}
+
+img {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
