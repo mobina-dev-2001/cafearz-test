@@ -1,7 +1,7 @@
-import type { FiltersState } from 'src/utils/use-filters';
-import type { Filters, CombinedTicket } from 'src/api/types';
+import type { FiltersState } from "src/utils/use-filters";
+import type { Filters, CombinedTicket } from "src/api/types";
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from "react";
 
 import {
   Box,
@@ -16,33 +16,34 @@ import {
   TableCell,
   Typography,
   Pagination,
-} from '@mui/material';
+  Skeleton,
+} from "@mui/material";
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+import { paths } from "src/routes/paths";
+import { useRouter } from "src/routes/hooks";
+import { RouterLink } from "src/routes/components";
 
-import { useFilters } from 'src/utils/use-filters';
+import { useFilters } from "src/utils/use-filters";
 
-import { useFullTickets } from 'src/api/api';
-import { DashboardContent } from 'src/layout/dashboard';
+import { useFullTickets } from "src/api/api";
+import { DashboardContent } from "src/layout/dashboard";
 
-import { Label } from 'src/components/label';
-import { Iconify } from 'src/components/iconify/iconify';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Label } from "src/components/label";
+import { Iconify } from "src/components/iconify/iconify";
+import CustomBreadcrumbs from "src/components/custom-breadcrumbs";
 
-import { getLabelColor } from './utils';
-import FormDialog from './Filter-dialog';
-import { TicketTableRow } from './ticket-table-row';
-import { TicketTableSkeleton } from './ticket-table-skeleton';
-import { TicketTableFiltersResult } from './ticket-table-filters-result';
-import { TABLE_HEAD, ROWS_PER_PAGE, STATUS_OPTIONS } from '../tickets-config';
+import { getLabelColor } from "./utils";
+import FormDialog from "./Filter-dialog";
+import { TicketTableRow } from "./ticket-table-row";
+import { TicketTableSkeleton } from "./ticket-table-skeleton";
+import { TicketTableFiltersResult } from "./ticket-table-filters-result";
+import { TABLE_HEAD, ROWS_PER_PAGE, STATUS_OPTIONS } from "../tickets-config";
 
 export default function TicketsListView() {
   const router = useRouter();
   const { data, isLoading } = useFullTickets();
 
-  const filters = useFilters({ status: 'ALL' });
+  const filters = useFilters({ status: "ALL" });
   const [filterOptions, setFilterOptions] = useState<Filters[]>([]);
   const [page, setPage] = useState(0);
 
@@ -65,11 +66,12 @@ export default function TicketsListView() {
 
   const canReset = Object.entries(filters.state).some(
     ([key, value]) =>
-      (key !== 'status' && value !== '' && value !== undefined) ||
-      (key === 'status' && value !== 'ALL')
+      (key !== "status" && value !== "" && value !== undefined) ||
+      (key === "status" && value !== "ALL")
   );
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+  const notFound =
+    !isLoading && ((!dataFiltered.length && canReset) || !dataFiltered.length);
 
   const handleViewTicket = useCallback(
     (ticketId: string) => {
@@ -91,9 +93,9 @@ export default function TicketsListView() {
       <CustomBreadcrumbs
         heading="لیست تیکت ها"
         links={[
-          { name: 'داشبورد', href: paths.dashboard.root },
-          { name: 'تیکت ها', href: paths.tickets.list },
-          { name: 'لیست تیکت ها' },
+          { name: "داشبورد", href: paths.dashboard.root },
+          { name: "تیکت ها", href: paths.tickets.list },
+          { name: "لیست تیکت ها" },
         ]}
         action={
           <Button
@@ -114,14 +116,25 @@ export default function TicketsListView() {
       <Card>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             pt: 0.75,
             px: 2,
           }}
         >
-          <Typography variant="body2">لیست تیکت ها ({data?.tickets.data.length})</Typography>
+          <Typography variant="body2">
+            لیست تیکت ها{" "}
+            {isLoading ? (
+              <Skeleton
+                width={25}
+                height={20}
+                sx={{ display: "inline-block" }}
+              />
+            ) : (
+              data?.tickets.data.length
+            )}
+          </Typography>
 
           {filterOptions.length > 0 && (
             <FormDialog
@@ -136,7 +149,7 @@ export default function TicketsListView() {
         </Box>
 
         <Tabs
-          value={filters.state.status || 'ALL'}
+          value={filters.state.status || "ALL"}
           onChange={(event, newValue) => {
             handleResetPage();
             filters.setState({ status: newValue });
@@ -148,12 +161,18 @@ export default function TicketsListView() {
               value={tab.value}
               label={tab.label}
               icon={
-                tab.value === 'ALL' ? undefined : (
+                tab.value === "ALL" ? undefined : (
                   <Label
-                    variant={tab.value === filters.state.status ? 'filled' : 'soft'}
+                    variant={
+                      tab.value === filters.state.status ? "filled" : "soft"
+                    }
                     color={getLabelColor(tab.value)}
                   >
-                    {tableData.filter((ticket) => ticket.status.key === tab.value).length}
+                    {
+                      tableData.filter(
+                        (ticket) => ticket.status.key === tab.value
+                      ).length
+                    }
                   </Label>
                 )
               }
@@ -170,7 +189,7 @@ export default function TicketsListView() {
           />
         )}
 
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: "relative" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -187,7 +206,10 @@ export default function TicketsListView() {
                 <TicketTableSkeleton rows={ROWS_PER_PAGE} />
               ) : (
                 dataFiltered
-                  .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE)
+                  .slice(
+                    page * ROWS_PER_PAGE,
+                    page * ROWS_PER_PAGE + ROWS_PER_PAGE
+                  )
                   .map((row) => (
                     <TicketTableRow
                       key={row.ticket_id}
@@ -199,8 +221,18 @@ export default function TicketsListView() {
 
               {notFound && (
                 <TableRow>
-                  <TableCell colSpan={12} sx={{ color: 'text.disabled', textAlign: 'center' }}>
-                    متاسفانه چیزی برای نمایش وجود نداره!
+                  <TableCell
+                    colSpan={12}
+                    sx={{ color: "text.disabled", textAlign: "center" }}
+                  >
+                    <img
+                      src="/assets/images/ic-content.svg"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <Typography variant="h6">
+                      متاسفانه چیزی برای نمایش وجود نداره!
+                    </Typography>
                   </TableCell>
                 </TableRow>
               )}
@@ -212,7 +244,10 @@ export default function TicketsListView() {
           count={Math.ceil(dataFiltered.length / ROWS_PER_PAGE)}
           page={page + 1}
           onChange={handleChangePage}
-          sx={{ py: 2, borderTop: (theme) => `1px solid ${theme.palette.divider}` }}
+          sx={{
+            py: 2,
+            borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+          }}
         />
       </Card>
     </DashboardContent>
@@ -227,11 +262,17 @@ function applyFilter({
   filters: FiltersState;
 }) {
   return inputData.filter((ticket) => {
-    if (filters.ticket_id && !ticket.ticket_id.toString().includes(filters.ticket_id)) {
+    if (
+      filters.ticket_id &&
+      !ticket.ticket_id.toString().includes(filters.ticket_id)
+    ) {
       return false;
     }
 
-    if (filters.fk_user_id && ticket.user.fk_user_id.toString() !== filters.fk_user_id) {
+    if (
+      filters.fk_user_id &&
+      ticket.user.fk_user_id.toString() !== filters.fk_user_id
+    ) {
       return false;
     }
 
@@ -247,7 +288,10 @@ function applyFilter({
       return false;
     }
 
-    if (filters.national_code && !ticket.user.national_code.includes(filters.national_code)) {
+    if (
+      filters.national_code &&
+      !ticket.user.national_code.includes(filters.national_code)
+    ) {
       return false;
     }
 
@@ -255,7 +299,10 @@ function applyFilter({
       return false;
     }
 
-    if (filters.ip_address && !ticket.user.ip_address.includes(filters.ip_address)) {
+    if (
+      filters.ip_address &&
+      !ticket.user.ip_address.includes(filters.ip_address)
+    ) {
       return false;
     }
 
@@ -266,7 +313,7 @@ function applyFilter({
       return false;
     }
 
-    if (filters.status && filters.status !== 'ALL') {
+    if (filters.status && filters.status !== "ALL") {
       if (ticket.status.key.toUpperCase() !== filters.status.toUpperCase()) {
         return false;
       }

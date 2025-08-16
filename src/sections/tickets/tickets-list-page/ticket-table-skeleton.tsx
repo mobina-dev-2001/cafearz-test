@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-import { Skeleton, TableRow, TableCell } from '@mui/material';
+import { Skeleton, TableRow, TableCell, Box } from "@mui/material";
 
 export function TicketTableSkeleton({ rows = 5 }: { rows?: number }) {
   return [...Array(rows)].map((_, rowIndex) => (
@@ -7,13 +6,13 @@ export function TicketTableSkeleton({ rows = 5 }: { rows?: number }) {
       {[...Array(7)].map((_, cellIndex) => (
         <TableCell key={cellIndex}>
           {cellIndex === 1 ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <Skeleton variant="circular" width={40} height={40} />
               <div>
                 <Skeleton variant="text" width={100} height={20} />
                 <Skeleton variant="text" width={80} height={16} />
               </div>
-            </div>
+            </Box>
           ) : cellIndex === 5 ? (
             <Skeleton variant="rounded" width={80} height={24} />
           ) : cellIndex === 6 ? (
